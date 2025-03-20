@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz App with Timer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+        .quiz-container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .btn-container button {
+            display: block;
+            width: 100%;
+            margin: 5px 0;
+            padding: 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background: #007bff;
+            color: white;
+        }
+        .hide {
+            display: none;
+        }
+        #next-btn {
+            margin-top: 20px;
+            padding: 10px;
+            background: green;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>Quiz App</h1>
+        <div id="timer">Time Left: <span id="time">300</span> sec</div>
+        <div id="question-container">
+            <h2 id="question">Question text</h2>
+            <div id="answer-buttons" class="btn-container"></div>
+        </div>
+        <button id="next-btn" class="hide">Next</button>
+        <div id="score-container" class="hide">
+            <h2>Your Score: <span id="score">0</span></h2>
+            <button onclick="location.reload()">Restart Quiz</button>
+        </div>
+    </div>
+    <script>
+        const questions = [
+            { question: "Which HTML tag is used to create a hyperlink?", answers: ["<limk>", "<a>", "<href>"], correct: "<a>" },
+            { question: "Which CSS property is used to change the text color?", answers: ["font-color", "text-style", "color"],correct:"color"},
+            { question: "Which of the following is NOT valid javascript datatype?", answers: ["number", "Boolean", "Character"], correct: "Character" },
+            {question: "Which keyword is used to declare a constant variable in javascript?", answers: ["var", "const", "static"], correct: "const" },
+            { question: "Which HTML tag is used to define an unordered list?", answers: ["<ul>", "<ol> "," <li>", "<list>"], correct: "<ul>" },
+            { question: "Which HTML tag is used to embed JavaScript code inside an HTML document?", answers: ["<js>", "<javascrit>", "<script>"], correct: "<script>" },  
+            { question: "Which symbol is used for comments in JavaScript?", answers: ["// for single-line and /* / for multi-line", "# for single-line and <!-- --> for multi-line", "/ / for single-line and // for multi-line  "], correct: "// for single-line and / / for multi-line* " },
+            { question: "Which property is used to create space between elements in CSS?", answers: ["padding", "spacing", "margin"], correct: "margin" },
+            { question: "What will typeof null return in JavaScript?", answers: ["object", "undefined", "null"], correct: "object" },
+            { question: "Which CSS property controls the text size?", answers: ["text-size", "font-size", "text-style"], correct: "font-size" },    
+            
+            { question: "Which tag is used to define a table row in HTML?", answers: ["<table>", "<tr>", "<th>"], correct: "<tr>" },
+            { question: "Which keyword is used to declare a variable in JavaScript?", answers: ["var", "int", "define"], correct: "var" },
+            { question: "Which of the following is used to make text bold in CSS?", answers: ["font-weight: bold", "text-bold: true", "weight: 700"], correct: "font-weight: bold" },
+            { question: "What is the default position property of an HTML element?", answers: ["relative", "static", "fixed"], correct: "static" },
+            { question: "Which function is used to print something in the console in JavaScript?", answers: ["console.log()", "log.console()", "print()"], correct: "console.log()" }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let timeLeft = 300;
+        let timer;
+
+        const questionElement = document.getElementById("question");
+        const answerButtons = document.getElementById("answer-buttons");
+        const nextButton = document.getElementById("next-btn");
+        const scoreContainer = document.getElementById("score-container");
+        const scoreText = document.getElementById("score");
+        const timeDisplay = document.getElementById("time");
+
+        function startTimer() {
+            timer = setInterval(() => {
+                timeLeft--;
+                timeDisplay.innerText = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    endQuiz();
+                }
+            }, 1000);
+        }
+
+        function showQuestion() {
+            resetState();
+            const questionData = questions[currentQuestionIndex];
+            questionElement.innerText = questionData.question;
+            questionData.answers.forEach(answer => {
+                const button = document.createElement("button");
+                button.innerText = answer;
+                button.classList.add("btn");
+                button.onclick = () => selectAnswer(answer, questionData.correct);
+                answerButtons.appendChild(button);
+            });
+        }
+
+        function resetState() {
+            answerButtons.innerHTML = "";
+            nextButton.classList.add("hide");
+        }
+
+        function selectAnswer(answer, correct) {
+            if (answer === correct) {
+                score++;
+            }
+            nextButton.classList.remove("hide");
+        }
+
+        nextButton.addEventListener("click", () => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                endQuiz();
+            }
+        });
+
+        function endQuiz() {
+            clearInterval(timer);
+            questionElement.innerText = "Quiz Over!";
+            answerButtons.innerHTML = "";
+            nextButton.classList.add("hide");
+            scoreContainer.classList.remove("hide");
+            scoreText.innerText = score;
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            showQuestion();
+            startTimer();
+        });
+    </script>
+</body>
+</html>
